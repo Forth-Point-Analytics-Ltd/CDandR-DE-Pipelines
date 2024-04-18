@@ -1,0 +1,12 @@
+person_airport_location:
+  src_table: person
+  join_tables:
+    - table: airport
+      column_pairs:
+        - person_airport_code
+        - airport_code
+    - table: country
+      column_pairs:
+        - airport_country_code
+        - country_country_code
+  transformation: _dummy_person_airport_location_transformation

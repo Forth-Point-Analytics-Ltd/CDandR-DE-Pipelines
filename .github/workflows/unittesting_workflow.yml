@@ -1,0 +1,24 @@
+name: Unit testing
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - run: pip install -r dev_requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Run pytest
+        run: pytest --cov=. tests/

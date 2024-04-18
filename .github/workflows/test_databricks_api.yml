@@ -1,0 +1,26 @@
+name: test_api
+
+on:
+  pull_request:
+    branches:
+      - redacted
+
+jobs:
+  deploy_pipeline:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    env:
+      DATABRICKS_API_TOKEN_TEST_PROD: ${{ secrets.TEST_PROD_DATABRICKS_WORKSPACE_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          cache: "pip"
+      - name: test api
+        run: |
+          curl --request GET "https://adb-8829604819759362.2.azuredatabricks.net/api/2.1/jobs/list" \
+          --header "Authorization: Bearer ${{ secrets.TEST_PROD_DATABRICKS_WORKSPACE_TOKEN }}"

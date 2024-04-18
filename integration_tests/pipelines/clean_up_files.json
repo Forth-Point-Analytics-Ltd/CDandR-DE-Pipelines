@@ -1,0 +1,26 @@
+{
+    "settings": {
+        "name": "clean_up_files",
+        "tasks": [
+            {
+                "task_key": "clean_up_files",
+                "notebook_task": {
+                    "notebook_path": "integration_tests/clean_up_files",
+                    "source": "GIT",
+                    "base_parameters": {
+                        "env_prefix":"<env_prefix>"
+                    }
+                },
+                "job_cluster_key": "<job_cluster_key>",
+                "libraries": [
+                    "<libraries>"
+                ]
+            }
+        ],
+        "git_source": {
+            "git_url": "https://github.com/Forth-Point-Analytics-Ltd/databricks-python-de-template",
+            "git_provider": "gitHub"
+        },
+        "format": "MULTI_TASK"
+    }
+}

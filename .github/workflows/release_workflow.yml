@@ -1,0 +1,32 @@
+name: release_workflow
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy_pipeline:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    env:
+      DATABRICKS_API_TOKEN_TEST_PROD: ${{ secrets.TEST_PROD_DATABRICKS_WORKSPACE_TOKEN }}
+
+    steps:
+      - id: get_current_release
+        uses: zingimmick/github-action-get-current-tag@v1
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.get_current_release.outputs.tag }}
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          cache: "pip"
+      - name: Install python libraries
+        run: |
+          pip install -r dev_requirements.txt
+          pip install -r requirements.txt
+      - name: Deploy databricks pipeline
+        run: python deploy/scripts/deploy_databricks_workflow.py -c deploy/configs/prod.yaml -gt ${{ steps.get_current_release.outputs.tag }}

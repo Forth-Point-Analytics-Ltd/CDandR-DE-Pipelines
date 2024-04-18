@@ -1,0 +1,51 @@
+name: integration_testing
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy_pipeline:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    env:
+      TEST_PROD_DATABRICKS_WORKSPACE_TOKEN: ${{ secrets.TEST_PROD_DATABRICKS_WORKSPACE_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          cache: "pip"
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Get Hash
+        id: hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_OUTPUT
+      - name: Install python libraries
+        run: |
+          pip install -r dev_requirements.txt
+          pip install -r requirements.txt
+      - name: Deploy databricks pipeline
+        run: |
+          echo "Pull request from ${{ steps.extract_branch.outputs.branch }}"
+          python deploy/scripts/deploy_databricks_workflow.py -c deploy/configs/test.yaml -g ${{ steps.extract_branch.outputs.branch }} -gh ${{steps.hash.outputs.git_hash}}
+      - name: Prepare pipelines for integration tests
+        run: |
+          FILES="integration_tests/pipelines/*"
+          for f in $FILES
+          do
+            echo "Processing $f file..."
+            python deploy/scripts/deploy_databricks_workflow.py -c deploy/configs/test.yaml  -w $f -g ${{ steps.extract_branch.outputs.branch }} -gh ${{steps.hash.outputs.git_hash}}
+          done
+      - name: Prepare data for integration tests
+        run: python deploy/scripts/run_databricks_workflow.py -c deploy/configs/test.yaml  -w integration_tests/pipelines/setup_integration_test.json -g ${{ steps.extract_branch.outputs.branch }}
+      - name: run integration tests
+        run: python deploy/scripts/run_databricks_workflow.py -c deploy/configs/test.yaml  -g ${{ steps.extract_branch.outputs.branch }}
+      - name: clean up integration tests
+        run: python deploy/scripts/run_databricks_workflow.py -c deploy/configs/test.yaml  -w integration_tests/pipelines/clean_up_files.json -g ${{ steps.extract_branch.outputs.branch }}

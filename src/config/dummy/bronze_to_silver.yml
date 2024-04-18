@@ -1,0 +1,11 @@
+airport:
+  src_name: airport
+  transformation: dummy_airport_transformation
+person:
+  src_name: person
+  prefix: person
+  transformation: dummy_person_transformation
+country:
+  src_name: country
+  prefix: country
+  transformation: dummy_country_transformation

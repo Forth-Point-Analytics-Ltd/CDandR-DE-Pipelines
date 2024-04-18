@@ -1,0 +1,14 @@
+spark_env_vars:
+  STORAGE_ACCOUNT: "dsemeadbsatraining" 
+  CONFIG_FILE_PATH: "../../config/"
+
+spark_config_vars:
+  spark.databricks.delta.preview.enabled: true
+  fs.azure.account.key.dsemeadbsatraining.dfs.core.windows.net: "{{secrets/dsemea-db-kv-secret-scope-training/dsemea-databricks-sa-access-key}}"
+requirements_path: "./requirements.txt"
+job_cluster_path: "deploy/templates/default_min_job_cluster.json"
+databricks_url: "https://adb-8829604819759362.2.azuredatabricks.net/"
+environment: "dev"
+cluster_name: "dsemea_13_ML2_job_compute_dev"
+workflow_path: "./src/pipelines/demo.json"
+databricks_token_key: "TEST_PROD_DATABRICKS_WORKSPACE_TOKEN"

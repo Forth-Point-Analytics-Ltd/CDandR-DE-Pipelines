@@ -1,0 +1,6 @@
+airport:
+  file_name: airport_data
+country:
+  file_name: country_data
+person:
+  file_name: person_data

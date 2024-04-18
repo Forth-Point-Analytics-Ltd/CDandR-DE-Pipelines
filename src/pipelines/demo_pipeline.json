@@ -1,0 +1,95 @@
+{
+    "settings": {
+        "name": "demo_dummy_pipeline",
+        "tasks": [
+            {
+                "task_key": "dummy_source_to_landing",
+                "notebook_task": {
+                    "notebook_path": "src/tasks/demo/dummy_src_to_landing",
+                    "source": "GIT",
+                    "base_parameters": {
+                        "env_prefix":"<env_prefix>",
+                        "job_id": "{{job_id}}",
+                        "run_id": "{{run_id}}"
+                    }
+
+                },
+                "job_cluster_key": "<job_cluster_key>",
+                "libraries": [
+                    "<libraries>"
+                ]
+            },
+            {
+                "task_key": "dummy_landing_to_bronze",
+                "depends_on": [
+                    {
+                      "task_key": "dummy_source_to_landing"
+                    }
+                ],
+                "notebook_task": {
+                    "notebook_path": "src/tasks/demo/dummy_landing_to_bronze",
+                    "source": "GIT",
+                    "base_parameters": {
+                        "env_prefix":"<env_prefix>",
+                        "job_id": "{{job_id}}",
+                        "run_id": "{{run_id}}"
+                    }
+
+                },
+                "job_cluster_key": "<job_cluster_key>",
+                "libraries": [
+                    "<libraries>"
+                ]
+            },
+            {
+                "task_key": "dummy_bronze_to_silver",
+                "depends_on": [
+                    {
+                      "task_key": "dummy_landing_to_bronze"
+                    }
+                ],
+                "notebook_task": {
+                    "notebook_path": "src/tasks/demo/dummy_bronze_to_silver",
+                    "source": "GIT",
+                    "base_parameters": {
+                        "env_prefix":"<env_prefix>",
+                        "job_id": "{{job_id}}",
+                        "run_id": "{{run_id}}"
+                    }
+
+                },
+                "job_cluster_key": "<job_cluster_key>",
+                "libraries": [
+                    "<libraries>"
+                ]
+            },
+            {
+                "task_key": "dummy_silver_to_gold",
+                "depends_on": [
+                    {
+                      "task_key": "dummy_bronze_to_silver"
+                    }
+                ],
+                "notebook_task": {
+                    "notebook_path": "src/tasks/demo/dummy_silver_to_gold",
+                    "source": "GIT",
+                    "base_parameters": {
+                        "env_prefix":"<env_prefix>",
+                        "job_id": "{{job_id}}",
+                        "run_id": "{{run_id}}"
+                    }
+
+                },
+                "job_cluster_key": "<job_cluster_key>",
+                "libraries": [
+                    "<libraries>"
+                ]
+            }
+        ],
+        "git_source": {
+            "git_url": "https://github.com/Forth-Point-Analytics-Ltd/databricks-python-de-template",
+            "git_provider": "gitHub"
+        },
+        "format": "MULTI_TASK"
+    }
+}
