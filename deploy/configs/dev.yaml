@@ -1,10 +1,12 @@
+#Need to edit
+
 spark_env_vars:
-  STORAGE_ACCOUNT: "dsemeadbsatraining" 
+  STORAGE_ACCOUNT: "cdrpricingdatacapture" 
   CONFIG_FILE_PATH: "../../config/"
 
 spark_config_vars:
   spark.databricks.delta.preview.enabled: true
-  fs.azure.account.key.dsemeadbsatraining.dfs.core.windows.net: "{{secrets/dsemea-db-kv-secret-scope-training/dsemea-databricks-sa-access-key}}"
+  fs.azure.account.key.cdrpricingdatacapture.dfs.core.windows.net: "{{secrets/dsemea-db-kv-secret-scope-training/dsemea-databricks-sa-access-key}}"
 requirements_path: "./requirements.txt"
 job_cluster_path: "deploy/templates/default_min_job_cluster.json"
 databricks_url: "https://adb-8829604819759362.2.azuredatabricks.net/"

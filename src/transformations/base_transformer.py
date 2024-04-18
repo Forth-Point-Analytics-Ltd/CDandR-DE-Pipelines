@@ -82,7 +82,7 @@ class BaseTransformer(metaclass=ABCMeta):
         """
         for df in self.cached_tables:
             df.unpersist()
-            
+
     def run(
         self,
         partition_by: Union[List[str], str, None] = None,

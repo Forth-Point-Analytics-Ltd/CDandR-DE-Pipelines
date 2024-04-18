@@ -76,13 +76,15 @@ class BronzeToSilver(BaseTransformer):
             df.withColumn(
                 "airport_latitude",
                 when(
-                    col("airport_latitude").isNull(), lit(0).cast(DecimalType())
+                    col("airport_latitude").isNull(),
+                    lit(0).cast(DecimalType()),
                 ).otherwise(col("airport_latitude")),
             )
             .withColumn(
                 "airport_longitude",
                 when(
-                    col("airport_longitude").isNull(), lit(0).cast(DecimalType())
+                    col("airport_longitude").isNull(),
+                    lit(0).cast(DecimalType()),
                 ).otherwise(col("airport_longitude")),
             )
             .drop("processing_ts")
