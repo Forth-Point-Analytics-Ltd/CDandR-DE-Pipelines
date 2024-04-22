@@ -9,7 +9,7 @@ job_cluster_path: "deploy/templates/default_min_job_cluster.json"
 databricks_url: "https://adb-2220921394648299.19.azuredatabricks.net/"
 environment: "dev"
 cluster_name: "cdruk_14_ML2_job_compute_dev"
-workflow_path: "./src/pipelines/demo_pipeline.json"
+workflow_path: "./src/pipelines/savers_pipeline.json"
 databricks_token_key: "TEST_PROD_DATABRICKS_WORKSPACE_TOKEN"
 workflow_settings:
   git_source:
