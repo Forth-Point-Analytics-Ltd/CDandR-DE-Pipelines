@@ -5,7 +5,7 @@
             {
                 "task_key": "savers_source_to_landing",
                 "notebook_task": {
-                    "notebook_path": "src/tasks/cd_and_r_pricing_data_capture/to_landing/savers/webscraper_to_landing",
+                    "notebook_path": "src/tasks/cd_and_r_pricing_data_capture/savers_webscraper_to_landing",
                     "source": "GIT",
                     "base_parameters": {
                         "env_prefix":"<env_prefix>",
