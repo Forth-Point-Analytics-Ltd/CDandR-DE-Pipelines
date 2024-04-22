@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "name": "savers_scaped_data_pipeline",
+        "tasks": [
+            {
+                "task_key": "savers_source_to_landing",
+                "notebook_task": {
+                    "notebook_path": "src/tasks/cd_and_r_pricing_data_capture/to_landing/savers/webscraper_to_landing",
+                    "source": "GIT",
+                    "base_parameters": {
+                        "env_prefix":"<env_prefix>",
+                        "job_id": "{{job_id}}",
+                        "run_id": "{{run_id}}"
+                    }
+
+                },
+                "job_cluster_key": "<job_cluster_key>",
+                "libraries": [
+                    "<libraries>"
+                ]
+            }
+        ],
+        "git_source": {
+            "git_url": "https://github.com/Forth-Point-Analytics-Ltd/",
+            "git_provider": "gitHub"
+        },
+        "format": "MULTI_TASK"
+    }
+}
