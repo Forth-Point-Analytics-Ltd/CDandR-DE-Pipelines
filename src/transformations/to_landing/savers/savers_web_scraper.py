@@ -1,10 +1,7 @@
 from typing import List, Tuple
 from datetime import datetime
 import pandas as pd
-from selenium.common.exceptions import (
-    TimeoutException,
-    WebDriverException,
-)
+from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,7 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import urllib.parse
 
-from src.utils.file_handler import load_json
+from src.utils.file_handler import load_json, save_pandas_csv_to_storage
 from src.utils.preprocessing.saver_transforamtions import (
     calculate_price_per,
     clean_name,
@@ -27,7 +24,12 @@ from src.utils.types import ProductInfo
 
 class SaversWebScraper:
     def __init__(
-        self, url: str, brand_data_file_path: str, dst_path: str
+        self,
+        dbutils,
+        url: str,
+        brand_data_file_path: str,
+        dst_path: str,
+        file_name: str,
     ) -> None:
         self.driver = init_selenium()
         self.wait = WebDriverWait(self.driver, 10)
@@ -37,6 +39,8 @@ class SaversWebScraper:
             self.competitor_brand_urls,
         ) = self.split_into_brand_competitor_urls(url, brand_data)
         self.dst_path = dst_path
+        self.dbutils = dbutils
+        self.file_name = file_name
 
     def compose_savers_urls(self, base_url: str, brand: str) -> str:
         return f"{base_url}/b/{urllib.parse.quote(brand)}"
@@ -69,18 +73,13 @@ class SaversWebScraper:
             raise
 
         # Find all product items
-        web_element = self.driver.find_elements(
-            By.CSS_SELECTOR,
-            element,
-        )
+        web_element = self.driver.find_elements(By.CSS_SELECTOR, element)
         return web_element
 
     def get_product_space(self):
         product_space = None
         try:
-            product_space = self.load_and_find(
-                "div.plp",
-            )
+            product_space = self.load_and_find("div.plp")
         except TimeoutException:
             raise
         except Exception:
@@ -130,6 +129,7 @@ class SaversWebScraper:
         return shelf_products
 
     def process_brand_urls(self, brand_urls: List[Tuple[str, str]]):
+        shelf_products = []
         for brand, brand_url in brand_urls:
             self.driver.get(brand_url)
             stop = False
@@ -140,8 +140,8 @@ class SaversWebScraper:
                         product_items = product_space[0].find_elements(
                             By.CSS_SELECTOR, "li.item__gutter"
                         )
-                        shelf_products = self.get_shelf_products(
-                            product_items, brand
+                        shelf_products.extend(
+                            self.get_shelf_products(product_items, brand)
                         )
                         next_page_link = product_space[0].find_elements(
                             By.CSS_SELECTOR, "a.icon-angle-right"
@@ -158,9 +158,12 @@ class SaversWebScraper:
                         stop = True
             except (TimeoutException, WebDriverException) as e:
                 print("Page does not exist")
+        return shelf_products
 
     def run(self):
         products = []
         products.extend(self.process_brand_urls(self.cdr_brand_urls))
         products.extend(self.process_brand_urls(self.competitor_brand_urls))
-        pd.DataFrame(products).to_csv(self.dst_path, index=False)
+        save_pandas_csv_to_storage(
+            self.dbutils, products, self.file_name, self.dst_path
+        )

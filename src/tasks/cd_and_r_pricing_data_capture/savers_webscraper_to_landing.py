@@ -22,7 +22,9 @@ from src.utils.spark_utils import (
 
 # COMMAND ----------
 SaversWebScraper(
+    dbutils,
     "https://www.savers.co.uk",
-    "brand_competitors.json",
-    create_abfss_path(container="dev-landing", path="savers/savers_data.csv"),
+    "../../transformations/to_landing/savers/brand_competitors.json",
+    create_abfss_path(container="dev-landing", path="savers"),
+    "savers_data.csv",
 ).run()
