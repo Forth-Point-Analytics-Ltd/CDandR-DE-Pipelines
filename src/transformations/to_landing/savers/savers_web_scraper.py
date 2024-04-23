@@ -165,5 +165,5 @@ class SaversWebScraper:
         products.extend(self.process_brand_urls(self.cdr_brand_urls))
         products.extend(self.process_brand_urls(self.competitor_brand_urls))
         save_pandas_csv_to_storage(
-            self.dbutils, products, self.file_name, self.dst_path
+            self.dbutils, pd.DataFrame(products), self.file_name, self.dst_path
         )
