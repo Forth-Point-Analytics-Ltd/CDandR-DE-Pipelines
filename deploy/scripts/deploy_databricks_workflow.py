@@ -28,6 +28,8 @@ def update_workflow(
     git_branch: str = None,
     git_tag: str = None,
     git_hash: str = "",
+    workflow_settings: Dict[str, str] = None,
+    cluster_settings: Dict[str, str] = None,
     **kwargs
 ) -> int:
     """Creates new workflow or updates an existing workflow from a job in Databricks
@@ -72,6 +74,15 @@ def update_workflow(
         job_cluster_path, cluster_name, spark_config_vars, spark_env_vars
     )
 
+    for cluster_setting in cluster_settings.keys():
+        job_cluster_settings[0]["new_cluster"][
+            cluster_setting
+        ] = cluster_settings[cluster_setting]
+    print(workflow_settings)
+    for workflow_setting in workflow_settings:
+        workflow["settings"][workflow_setting] = workflow_settings[
+            workflow_setting
+        ]
     current_tasks = workflow["settings"]["tasks"]
     updated_tasks = []
     libraries = create_cluster_pypi_libraries_config(requirements_path)
@@ -92,9 +103,8 @@ def update_workflow(
     if environment is not None:
         workflow["settings"]["name"] = workflow_name
 
-    print(workflow["settings"]["name"])
     job_id = databricks_api.get_job_id_from_name(workflow["settings"]["name"])
-
+    print(workflow)
     if job_id is None:
         return databricks_api.create_workflow(workflow)
     return databricks_api.update_workflow(job_id, workflow)
@@ -106,40 +116,18 @@ if __name__ == "__main__":
     required_named.add_argument("-c", "--config-file", required=True)
 
     optional_named = parser.add_argument_group("optional named arguments")
+    optional_named.add_argument("-gh", "--git-hash", nargs="?", default="")
     optional_named.add_argument(
-        "-gh",
-        "--git-hash",
-        nargs="?",
-        default="",
+        "-g", "--github-branch-path", nargs="?", default=None
     )
+    optional_named.add_argument("-gt", "--github-tag", nargs="?", default=None)
     optional_named.add_argument(
-        "-g",
-        "--github-branch-path",
-        nargs="?",
-        default=None,
-    )
-    optional_named.add_argument(
-        "-gt",
-        "--github-tag",
-        nargs="?",
-        default=None,
-    )
-    optional_named.add_argument(
-        "-w",
-        "--workflow_path",
-        nargs="?",
-        default=None,
+        "-w", "--workflow_path", nargs="?", default=None
     )
     args = parser.parse_args()
     yaml_path = args.config_file
 
     config = load_yaml(yaml_path)
-
-    print(config)
-    print(
-        os.environ.get(config["databricks_token_key"]),
-    )
-
     databricks_api = DatabricksAPIClient(
         config["databricks_url"],
         os.environ.get(config["databricks_token_key"]),

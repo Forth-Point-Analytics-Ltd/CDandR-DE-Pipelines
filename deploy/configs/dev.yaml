@@ -1,14 +1,21 @@
 spark_env_vars:
-  STORAGE_ACCOUNT: "dsemeadbsatraining" 
+  STORAGE_ACCOUNT: "cdrukstorageacc" 
   CONFIG_FILE_PATH: "../../config/"
-
 spark_config_vars:
   spark.databricks.delta.preview.enabled: true
-  fs.azure.account.key.dsemeadbsatraining.dfs.core.windows.net: "{{secrets/dsemea-db-kv-secret-scope-training/dsemea-databricks-sa-access-key}}"
+  fs.azure.account.key.cdrukstorageacc.dfs.core.windows.net: "{{secrets/cdr-uk-keyvault-scope/cdrukstorageacc-access-key}}"
 requirements_path: "./requirements.txt"
 job_cluster_path: "deploy/templates/default_min_job_cluster.json"
-databricks_url: "https://adb-8829604819759362.2.azuredatabricks.net/"
+databricks_url: "https://adb-2220921394648299.19.azuredatabricks.net/"
 environment: "dev"
-cluster_name: "dsemea_13_ML2_job_compute_dev"
-workflow_path: "./src/pipelines/demo.json"
+cluster_name: "cdruk_14_ML2_job_compute_dev"
+workflow_path: "./src/pipelines/savers_pipeline.json"
 databricks_token_key: "TEST_PROD_DATABRICKS_WORKSPACE_TOKEN"
+workflow_settings:
+  git_source:
+    git_url: "https://github.com/Forth-Point-Analytics-Ltd/CDandR-DE-Pipelines"
+    git_provider: "gitHub"
+cluster_settings:
+  init_scripts:
+    - workspace:
+        destination: "/Repos/CDandR_DataPipeline/CDandR-DE-Pipelines/deploy/scripts/bash/webscraper_script.sh"

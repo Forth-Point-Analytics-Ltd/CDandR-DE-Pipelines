@@ -7,6 +7,7 @@ Attributes:
     DBFS_FS_PREFIX (str): The databricks file system api prefix.
     DBFS_LOCAL_ROOT (str): The databricks Ubuntu machine file prefix.
 """
+
 from datetime import datetime
 import json
 import os
@@ -16,9 +17,11 @@ from src.config import logger
 import zipfile_deflate64 as zipfile
 from typing import IO, Union
 import yaml
+import pandas as pd
 
 
 DBFS_FS_PREFIX = "/dbfs/"
+DBFS_DB_PREFIX = "dbfs:"
 DBFS_LOCAL_ROOT = "file:"
 
 
@@ -132,3 +135,13 @@ def zip_files_to_storage_account(
         except Exception as error:
             logger.exception("Failed to zip files")
             raise error
+
+
+def save_pandas_csv_to_storage(
+    dbutils, data: pd.DataFrame, file_name: str, abfss_path: str
+):
+    with tempfile.TemporaryDirectory(prefix=DBFS_FS_PREFIX) as directory:
+        tmp_dir = directory.split("/")[2]
+        db_path = f"{DBFS_DB_PREFIX}/{tmp_dir}/{file_name}"
+        data.to_csv(f"{directory}/{file_name}")
+        dbutils.fs.mv(db_path, f"{abfss_path}{file_name}")

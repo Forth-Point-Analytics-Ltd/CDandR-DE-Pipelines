@@ -3,6 +3,7 @@
 Attributes:
     LOGGER_CONFIG_PATH (str): The relative path to the logging yml file.
 """
+
 import logging
 import logging.config
 import os

@@ -1,15 +1,18 @@
 {
     "settings": {
-        "name": "clean_up_files",
+        "name": "savers_scaped_data_pipeline",
         "tasks": [
             {
-                "task_key": "clean_up_files",
+                "task_key": "savers_source_to_landing",
                 "notebook_task": {
-                    "notebook_path": "integration_tests/clean_up_files",
+                    "notebook_path": "src/tasks/cd_and_r_pricing_data_capture/savers_webscraper_to_landing",
                     "source": "GIT",
                     "base_parameters": {
-                        "env_prefix":"<env_prefix>"
+                        "env_prefix":"<env_prefix>",
+                        "job_id": "{{job_id}}",
+                        "run_id": "{{run_id}}"
                     }
+
                 },
                 "job_cluster_key": "<job_cluster_key>",
                 "libraries": [

@@ -87,7 +87,7 @@
             }
         ],
         "git_source": {
-            "git_url": "https://github.com/Forth-Point-Analytics-Ltd/databricks-python-de-template",
+            "git_url": "https://github.com/Forth-Point-Analytics-Ltd/",
             "git_provider": "gitHub"
         },
         "format": "MULTI_TASK"
