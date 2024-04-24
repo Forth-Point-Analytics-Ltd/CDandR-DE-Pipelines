@@ -144,4 +144,4 @@ def save_pandas_csv_to_storage(
         tmp_dir = directory.split("/")[2]
         db_path = f"{DBFS_DB_PREFIX}/{tmp_dir}/{file_name}"
         data.to_csv(f"{directory}/{file_name}")
-        dbutils.fs.mv(db_path, abfss_path)
+        dbutils.fs.mv(db_path, f"{abfss_path}{file_name}")
