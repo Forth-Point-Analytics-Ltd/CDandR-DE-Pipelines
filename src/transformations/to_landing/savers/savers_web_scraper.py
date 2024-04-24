@@ -11,15 +11,12 @@ import urllib.parse
 
 from src.utils.file_handler import load_json, save_pandas_csv_to_storage
 from src.utils.preprocessing.saver_transforamtions import (
-    calculate_price_per,
-    clean_name,
     clean_price,
     get_item_info,
-    parse_quantity,
 )
 from src.utils.selenium_utils import init_selenium
 from src.utils.spark_utils import create_abfss_path
-from src.utils.types import ProductInfo
+from src.utils.types import RawProductInfo
 
 
 class SaversWebScraper:
@@ -89,37 +86,27 @@ class SaversWebScraper:
     def get_product_items(self, product_space: WebElement):
         return product_space.find_elements(By.CSS_SELECTOR, "li.item__gutter")
 
-    def get_product_info(self, product: WebElement, brand: str) -> ProductInfo:
-        product_name = clean_name(
-            get_item_info(product, "a", "item__productName", "innerHTML")
+    def get_product_info(
+        self, product: WebElement, brand: str
+    ) -> RawProductInfo:
+        product_name = get_item_info(
+            product, "a", "item__productName", "innerHTML"
         )
+
         product_price_now = clean_price(
             self.driver,
             product.find_element(By.CSS_SELECTOR, "span.item__price"),
         )
         product_url = get_item_info(product, "a", "item__productName", "href")
-
-        quantity = parse_quantity(product_name)
-        product_quantity = quantity.multiplier
-        product_size = quantity.quantity
-        product_size_unit = quantity.unit
-        price_per = calculate_price_per(product_price_now, quantity)
         timestamp = datetime.utcnow()
         brand_name = brand
-        product_price_per = price_per.price
-        product_price_per_unit = price_per.unit
 
-        return ProductInfo(
+        return RawProductInfo(
             timestamp,
             product_name,
             brand_name,
             product_url,
             product_price_now,
-            product_quantity,
-            product_size,
-            product_size_unit,
-            product_price_per,
-            product_price_per_unit,
         )
 
     def get_shelf_products(self, product_items: List[WebElement], brand):
