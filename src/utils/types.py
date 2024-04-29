@@ -14,7 +14,7 @@ class PanderaProperties(TypedDict):
     dataframe: DataFrame
 
 
-class ProductInfo(NamedTuple):
+class SilverProductInfo(NamedTuple):
     timestamp: datetime
     product_name: str
     brand_name: str
@@ -25,6 +25,14 @@ class ProductInfo(NamedTuple):
     product_size_unit: str
     product_price_per: Decimal
     product_price_per_unit: str
+
+
+class RawProductInfo(NamedTuple):
+    timestamp: datetime
+    product_name: str
+    brand_name: str
+    url: str
+    product_price_now: Decimal
 
 
 class Quantity(NamedTuple):
